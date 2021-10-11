@@ -48,3 +48,5 @@ override.tf.json
 # End of https://www.toptal.com/developers/gitignore/api/terraform,visualstudiocode
 
 build/
+localstack/tmp
+.swp
