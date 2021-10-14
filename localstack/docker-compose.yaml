@@ -26,4 +26,4 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
 networks:
   jupyter:
-    name: localstack_network
+    name: localstack-net
