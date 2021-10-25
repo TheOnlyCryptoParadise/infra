@@ -5,7 +5,7 @@ services:
     container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
     image: localstack/localstack
     networks:
-        - jupyter
+        - localstack-net
     ports:
       - "127.0.0.1:53:53"
       - "127.0.0.1:53:53/udp"
@@ -13,7 +13,7 @@ services:
       - "127.0.0.1:4566:4566"
       - "127.0.0.1:4571:4571"
     environment:
-      - SERVICES=dynamodb,s3
+      - SERVICES=kinesis,s3
       - DEBUG=${DEBUG- }
       - DATA_DIR=${DATA_DIR- }
       - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
@@ -24,6 +24,19 @@ services:
     volumes:
       - "./tmp/localstack:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+  sql-db:
+    image: mariadb
+    restart: always
+    networks:
+        - localstack-net
+    ports:
+     - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=test123
+      - MARIADB_USER=test
+      - MARIADB_PASSWORD=test
+      - MARIADB_DATABASE=candle_data_service
+      - MARIADB_BIND_ADDRESS=0.0.0.0
 networks:
-  jupyter:
+  localstack-net:
     name: localstack-net
