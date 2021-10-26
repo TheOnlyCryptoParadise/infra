@@ -1,36 +1,38 @@
 version: "3.3"
 
 services:
-  localstack:
-    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
-    image: localstack/localstack
-    networks:
-        - localstack-net
-    ports:
-      - "127.0.0.1:53:53"
-      - "127.0.0.1:53:53/udp"
-      - "127.0.0.1:443:443"
-      - "127.0.0.1:4566:4566"
-      - "127.0.0.1:4571:4571"
-    environment:
-      - SERVICES=kinesis,s3
-      - DEBUG=${DEBUG- }
-      - DATA_DIR=${DATA_DIR- }
-      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
-      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY- }
-      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - HOST_TMP_FOLDER=${TMPDIR}
-    volumes:
-      - "./tmp/localstack:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+  # localstack:
+  #   container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+  #   image: localstack/localstack
+  #   networks:
+  #       - localstack-net
+  #   ports:
+  #     - "127.0.0.1:53:53"
+  #     - "127.0.0.1:53:53/udp"
+  #     - "127.0.0.1:443:443"
+  #     - "127.0.0.1:4566:4566"
+  #     - "127.0.0.1:4571:4571"
+  #   environment:
+  #     - SERVICES=kinesis,s3
+  #     - DEBUG=${DEBUG- }
+  #     - DATA_DIR=${DATA_DIR- }
+  #     - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+  #     - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY- }
+  #     - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+  #     - DOCKER_HOST=unix:///var/run/docker.sock
+  #     - HOST_TMP_FOLDER=${TMPDIR}
+  #   volumes:
+  #     - "./tmp/localstack:/tmp/localstack"
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
   sql-db:
     image: mariadb
     restart: always
     networks:
-        - localstack-net
+      - localstack-net
     ports:
-     - "3306:3306"
+      - "3306:3306"
+    volumes:
+      - "./sql_db_init.sql:/docker-entrypoint-initdb.d/sql_db_init.sql"
     environment:
       - MARIADB_ROOT_PASSWORD=test123
       - MARIADB_USER=test
