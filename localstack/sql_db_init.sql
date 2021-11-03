@@ -21,3 +21,17 @@ then
 end if;
 END $
 DELIMITER ;
+
+
+DELIMITER $
+BEGIN NOT ATOMIC
+
+If not exists (SELECT 1 
+               FROM   INFORMATION_SCHEMA.SCHEMATA
+               WHERE  SCHEMA_NAME = 'transaction_service')
+then
+  CREATE DATABASE transaction_service;
+  grant all privileges on transaction_service.* to 'test'@'%';
+end if;
+END $
+DELIMITER ;
