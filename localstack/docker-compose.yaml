@@ -33,11 +33,11 @@ services:
     volumes:
       - "./sql_db_init.sql:/docker-entrypoint-initdb.d/sql_db_init.sql"
     environment:
-      - MARIADB_ROOT_PASSWORD=test123
-      - MARIADB_USER=test
-      - MARIADB_PASSWORD=test
-      - MARIADB_DATABASE=candle_data_service
-      - MARIADB_BIND_ADDRESS=0.0.0.0
+      - MYSQL_ROOT_PASSWORD=test123
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+      - MYSQL_DATABASE=candle_data_service
+      - MYSQL_BIND_ADDRESS=0.0.0.0
   rabbit:
     image: rabbitmq:3.9
     networks:
