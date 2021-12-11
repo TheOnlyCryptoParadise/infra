@@ -13,12 +13,13 @@ services:
       - "127.0.0.1:4566:4566"
       - "127.0.0.1:4571:4571"
     environment:
-      - SERVICES=kinesis,s3,sqs,sns
-      - DEBUG=${DEBUG- }
+      - SERVICES=sqs,s3
+      - DEBUG=1
       - DATA_DIR=${DATA_DIR- }
       - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
       - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY- }
       - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - SQS_PROVIDER=moto
       - DOCKER_HOST=unix:///var/run/docker.sock
       - HOST_TMP_FOLDER=${TMPDIR}
     volumes:
