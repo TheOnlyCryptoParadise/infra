@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sql-config
+data:
+  # property-like keys; each key maps to a simple value
+  sqlinit: |-
+{{ .Files.Get "db_init.sql" | indent 4 }}

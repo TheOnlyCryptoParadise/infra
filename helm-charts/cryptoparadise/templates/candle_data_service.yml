@@ -1,0 +1,65 @@
+{{- if .Values.candle_data_service.enabled -}}
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: candle-data-service-pod
+  labels:
+    app: candle_data_service
+
+spec:
+  containers:
+    - name: candle-data-service
+      image: lewelyn/cryptoparadise-candle_data_service:{{- .Values.candle_data_service.image_tag }}
+      {{ include "containers_spec_common" . | nindent 6}}
+      env:
+        {{ include "aws_envs" . | nindent 8 }}
+        {{ include "sql_db_conn_info" . | nindent 8 }}
+        - name: FLASK_ENV
+          value: development
+        - name: RABBIT_HOSTNAME
+          value: {{ .Values.mq.service_name }}
+      command: ['sh', '-c']
+      # args: ['ls -al']
+      args: ['python create_environment.py && waitress-serve --call candle_data_service:create_app']
+      # volumeMounts:
+      # - name: logging-config
+      #   mountPath: "/app/"
+      #   readOnly: false
+  volumes:
+    # You set volumes at the Pod level, then mount them into containers inside that Pod
+    - name: logging-config
+      configMap:
+        # Provide the name of the ConfigMap you want to mount.
+        name: candle-data-service-logging-config
+        # An array of keys from the ConfigMap to create as files
+        items:
+        - key: "data"
+          path: "logging_config.yml"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.candle_data_service.service_name }}
+spec:
+  # type: NodePort
+  selector:
+    app: candle_data_service
+  ports:
+    - port: {{ .Values.candle_data_service.port }}
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.candle_data_service.service_name }}-ex
+spec:
+  type: NodePort
+  selector:
+    app: candle_data_service
+  ports:
+    - port: {{ .Values.candle_data_service.port }}
+      targetPort: 8080
+      nodePort: {{ .Values.candle_data_service.port }}
+
+{{- end -}}

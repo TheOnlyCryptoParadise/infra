@@ -1,0 +1,74 @@
+aws:
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  AWS_DEFAULT_REGION: test
+
+bot_manager:
+  enabled: true
+  port: 50057
+  image_tag: latest
+  service_name: bot-manager-service
+
+candle_data_service:
+  enabled: true
+  port: 5000
+  full_url: http://candle-data-service-service:5000
+  service_name: candle-data-service-service
+  image_tag: latest
+
+sql_db:
+  enabled: true
+  service_name: sql-db-service
+  port: 3306
+  image_tag: latest
+  user: test
+  password: test
+  root_password: test
+
+jupyter:
+  enabled: true
+  service_name: jupyter-service
+  port: 8888
+  image_tag: latest
+  front_dns_name: "*"
+
+mq:
+  enabled: true
+  service_name: mq-service
+  image_tag: latest
+  port: 5672
+
+sqs:
+  enabled: false
+  service_name: localstack-service
+  region: "eu-central-1"
+
+frontend:
+  enabled: true
+  image_tag: latest
+  service_name: dashboard-frontend-service
+  port: 80
+
+localstack:
+  enabled: true
+  service_name: localstack-service
+  image_tag: latest
+  port: 4566
+
+stock_mock:
+  enabled: false
+  image_tag: latest
+  service_name: stock-mock-service
+  port: 62052
+
+transaction_service:
+  enabled: false
+  image_tag: latest
+  service_name: transaction-service-service
+  port: 50058
+
+envoy:
+  enabled: true
+  image_tag: v1.20-latest
+  service_name: envoy-service
+  port: 8080

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envoy-config
+  labels:
+    {{ include "cryptoparadise.labels" . | nindent 4 }}  
+data:
+  # property-like keys; each key maps to a simple value
+  config: |-
+{{ .Files.Get "envoy_config.yml" | indent 4 }}

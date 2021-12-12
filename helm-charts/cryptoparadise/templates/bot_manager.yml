@@ -1,0 +1,62 @@
+{{- if .Values.bot_manager.enabled -}}
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bot-manager-pod
+  labels:
+    app: bot-manager
+
+spec:
+  containers:
+    - name: bot-manager
+      image: "lewelyn/cryptoparadise-bot_manager:{{- .Values.bot_manager.image_tag -}}"
+      {{ include "containers_spec_common" . | nindent 6}}
+      env:
+        {{ include "aws_envs" . | nindent 8 }}
+        {{ include "sql_db_conn_info" . | nindent 8 }}
+        - name: MARIADB_DB_NAME
+          value: bot_manager
+        - name: BOT_ENV
+          value: development
+        - name: BOT_MANAGER_ADDR
+          value: "0.0.0.0:{{- .Values.bot_manager.port }}"
+        - name: CANDLE_DATA_SERVICE_URL
+          value: {{ .Values.candle_data_service.full_url }}
+        - name: BOT_MANAGER_DNS_NAME
+          value: {{ .Values.bot_manager.service_name }}
+        - name: JUPYTER_URL
+          value: "http://{{ .Values.jupyter.service_name }}:{{ .Values.jupyter.port }}/api/contents/"
+        - name: MQ_IP
+          value: {{ .Values.mq.service_name }}
+        - name: TS_SQS_ADDR
+          value: {{ .Values.sqs.service_name }}
+        - name: TS_SQS_REGION
+          value: {{ .Values.sqs.region }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.bot_manager.service_name }}
+spec:
+  # type: NodePort
+  selector:
+    app: bot-manager
+  ports:
+    - port: {{ .Values.bot_manager.port }}
+      targetPort: {{ .Values.bot_manager.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.bot_manager.service_name }}-ex
+spec:
+  type: NodePort
+  selector:
+    app: bot-manager
+  ports:
+    - port: {{ .Values.bot_manager.port }}
+      targetPort: {{ .Values.bot_manager.port }}
+      nodePort: {{ .Values.bot_manager.port }}
+
+{{- end -}}

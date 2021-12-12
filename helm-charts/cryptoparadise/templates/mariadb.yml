@@ -1,0 +1,64 @@
+{{- if .Values.sql_db.enabled -}}
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sql-db-pod
+  labels:
+    app: sql-db
+
+spec:
+  containers:
+    - name: sql-db
+      image: "mariadb:{{- .Values.localstack.image_tag }}"
+      {{ include "containers_spec_common" . | nindent 6}}
+      env:
+        {{ include "sql_db_conn_info" . | nindent 8 }}
+
+        - name: MYSQL_DATABASE
+          value: candle_data_service
+        - name: MYSQL_BIND_ADDRESS
+          value: 0.0.0.0
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.sql_db.root_password }}
+      volumeMounts:
+      - name: config
+        mountPath: "/docker-entrypoint-initdb.d"
+        readOnly: true          
+  volumes:
+    # You set volumes at the Pod level, then mount them into containers inside that Pod
+    - name: config
+      configMap:
+        # Provide the name of the ConfigMap you want to mount.
+        name: sql-config
+        # An array of keys from the ConfigMap to create as files
+        items:
+        - key: "sqlinit"
+          path: "sqlinit.sql"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.sql_db.service_name }}
+spec:
+  # type: NodePort
+  selector:
+    app: sql-db
+  ports:
+    - port: {{ .Values.sql_db.port }}
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.sql_db.service_name }}-ex
+spec:
+  type: NodePort
+  selector:
+    app: sql-db
+  ports:
+    - port: {{ .Values.sql_db.port }}
+      targetPort: 3306
+      nodePort: {{ .Values.sql_db.port }}
+
+{{- end -}}

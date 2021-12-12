@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: candle-data-service-logging-config
+  labels:
+    {{ include "cryptoparadise.labels" . | nindent 4 }}
+data:
+  # property-like keys; each key maps to a simple value
+  data: |
+    version: 1
+    disable_existing_loggers: false
+    formatters:
+      default:
+        format: "[%(asctime)s]:%(name)s:%(module)s:%(levelname)s: %(message)s"
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: default
+        stream: ext://sys.stdout
+        level: DEBUG
+      # file:
+      #   class: logging.FileHandler
+      #   formatter: default
+      #   filename: "{path}/service.log"
+      #   level: DEBUG
+    root:
+      level: INFO
+      handlers:
+      - console
+    loggers:
+      werkzeug:
+        level: INFO
+      route_logger:
+        level: INFO
+      candle_data_service.candleDAO:
+        level: INFO
+      candle_data_service.CandlePeriodicDownloader:
+        level: INFO
+      candle_data_service.RabbitWrapper:
+        level: INFO
+      pika.adapters:
+        level: WARNING
