@@ -50,3 +50,5 @@ override.tf.json
 build/
 localstack/tmp
 .swp
+eks-key
+eks-key.pub

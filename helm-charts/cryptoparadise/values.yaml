@@ -41,7 +41,9 @@ mq:
 sqs:
   enabled: false
   service_name: localstack-service
+  port: 4566 
   region: "eu-central-1"
+  endpoint_url: http://localstack-service:4566
 
 frontend:
   enabled: true
@@ -56,16 +58,22 @@ localstack:
   port: 4566
 
 stock_mock:
-  enabled: false
+  enabled: true
   image_tag: latest
   service_name: stock-mock-service
-  port: 62052
+  port: 62053
 
 transaction_service:
-  enabled: false
+  enabled: true
   image_tag: latest
   service_name: transaction-service-service
   port: 50058
+
+statistics_service:
+  enabled: true
+  image_tag: latest
+  service_name: statistics-service-service
+  port: 62049
 
 envoy:
   enabled: true

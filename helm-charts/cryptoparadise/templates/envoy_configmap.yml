@@ -7,4 +7,4 @@ metadata:
 data:
   # property-like keys; each key maps to a simple value
   config: |-
-{{ .Files.Get "envoy_config.yml" | indent 4 }}
+{{ tpl (.Files.Get "envoy_config.yml") . | indent 4 }}

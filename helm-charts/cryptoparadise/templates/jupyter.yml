@@ -11,7 +11,8 @@ spec:
   containers:
     - name: jupyter
       image: "lewelyn/cryptoparadise-jupyter:{{- .Values.jupyter.image_tag }}"
-      {{ include "containers_spec_common" . | nindent 6}}
+      {{/* include "containers_spec_common" . | nindent 6 */}}
+      imagePullPolicy: Always
       env:
         - name: JUPYTER_ENABLE_LAB
           value: "yes"

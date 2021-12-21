@@ -22,9 +22,21 @@ static_resources:
                     - name: local_service
                       domains: ["*"]
                       routes:
-                        - match: { prefix: "/" }
+                        - match: { prefix: "/BotManagerCommunicator" }
                           route:
-                            cluster: grpc_service
+                            cluster: bot_manager_service
+                            max_grpc_timeout: 0s
+                            max_stream_duration:
+                              grpc_timeout_header_max: 0s
+                        - match: { prefix: "/StockCommunicator" }
+                          route:
+                            cluster: stock_service
+                            max_grpc_timeout: 0s
+                            max_stream_duration:
+                              grpc_timeout_header_max: 0s
+                        - match: { prefix: "/StatisticsServiceCommunicator" }
+                          route:
+                            cluster: statistics_service
                             max_grpc_timeout: 0s
                             max_stream_duration:
                               grpc_timeout_header_max: 0s
@@ -40,18 +52,48 @@ static_resources:
                   - name: envoy.filters.http.cors
                   - name: envoy.filters.http.router
   clusters:
-    - name: grpc_service
+    - name: bot_manager_service
       connect_timeout: 0.25s
       type: logical_dns
       http2_protocol_options: {}
       lb_policy: round_robin
       # win/mac hosts: Use address: host.docker.internal instead of address: localhost in the line below
       load_assignment:
-        cluster_name: cluster_0
+        cluster_name: bot_manager_service
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
-                      address: host.docker.internal
-                      port_value: 50057
+                      address: {{ .Values.bot_manager.service_name }}
+                      port_value: {{ .Values.bot_manager.port }}
+    - name: stock_service
+      connect_timeout: 0.25s
+      type: logical_dns
+      http2_protocol_options: {}
+      lb_policy: round_robin
+      # win/mac hosts: Use address: host.docker.internal instead of address: localhost in the line below
+      load_assignment:
+        cluster_name: stock_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: {{ .Values.stock_mock.service_name }}
+                      port_value: {{ .Values.stock_mock.port }}
+    - name: statistics_service
+      connect_timeout: 0.25s
+      type: logical_dns
+      http2_protocol_options: { }
+      lb_policy: round_robin
+      # win/mac hosts: Use address: host.docker.internal instead of address: localhost in the line below
+      load_assignment:
+        cluster_name: statistics_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: {{ .Values.statistics_service.service_name }}
+                      port_value: {{ .Values.statistics_service.port }}

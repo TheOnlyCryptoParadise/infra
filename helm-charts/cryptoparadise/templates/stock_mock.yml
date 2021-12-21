@@ -17,6 +17,8 @@ spec:
 
         - name: CANDLE_DATA_SERVICE_URL
           value: {{ .Values.candle_data_service.full_url }}
+        - name: STOCK_ADDR
+          value: 0.0.0.0:62052
 
 ---
 apiVersion: v1

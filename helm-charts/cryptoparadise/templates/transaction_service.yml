@@ -16,14 +16,16 @@ spec:
         {{ include "aws_envs" . | nindent 8 }}
         - name: MQ_IP
           value: {{ .Values.mq.service_name }}
+        - name: TRANSACTION_SERVICE_ADDR
+          value: "0.0.0.0:{{- .Values.transaction_service.port }}"
         - name: TS_SQS_ADDR
-          value: {{ .Values.sqs.service_name }}
+          value: {{ .Values.sqs.endpoint_url }}
         - name: TS_SQS_REGION
           value: {{ .Values.sqs.region }}
+        - name: CANDLE_DATA_SERVICE_URL
+          value: http://candle_data_service:8080
         - name: BOT_MANAGER_ADDR
           value: "{{ .Values.bot_manager.service_name -}}:{{- .Values.bot_manager.port }}"
-        - name: TRANSACTION_SERVICE_ADDR
-          value: "{{ .Values.transaction_service.service_name -}}:{{- .Values.transaction_service.port }}"
         - name: STOCK_SERVER_ADDR
           value: "{{ .Values.stock_mock.service_name -}}:{{- .Values.stock_mock.port }}"
         - name: BOT_IP

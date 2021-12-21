@@ -8,6 +8,8 @@ metadata:
     app: bot-manager
 
 spec:
+  hostname: bot-manager-pod-0
+  subdomain: bots  
   containers:
     - name: bot-manager
       image: "lewelyn/cryptoparadise-bot_manager:{{- .Values.bot_manager.image_tag -}}"
@@ -23,16 +25,29 @@ spec:
           value: "0.0.0.0:{{- .Values.bot_manager.port }}"
         - name: CANDLE_DATA_SERVICE_URL
           value: {{ .Values.candle_data_service.full_url }}
-        - name: BOT_MANAGER_DNS_NAME
-          value: {{ .Values.bot_manager.service_name }}
+        - name: TRANSACTION_SERVICE_ADDR
+          value: "{{ .Values.transaction_service.service_name }}:{{ .Values.transaction_service.port }}"
         - name: JUPYTER_URL
           value: "http://{{ .Values.jupyter.service_name }}:{{ .Values.jupyter.port }}/api/contents/"
+        - name: BOT_MANAGER_DNS_NAME
+          value: bot-manager-pod-0.bots
         - name: MQ_IP
           value: {{ .Values.mq.service_name }}
         - name: TS_SQS_ADDR
-          value: {{ .Values.sqs.service_name }}
+          value: "{{ .Values.sqs.endpoint_url }}"
         - name: TS_SQS_REGION
           value: {{ .Values.sqs.region }}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bots
+spec:
+  selector:
+    app: bot-manager
+  clusterIP: None
+
 ---
 apiVersion: v1
 kind: Service
